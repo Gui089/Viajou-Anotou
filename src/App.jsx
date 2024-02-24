@@ -3,12 +3,32 @@ import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
 
+
+
+const NotFound = () => {
+  return (
+    <>
+      <Header />
+      <main className='main-not-found'>
+        <section>
+          <div>
+            <h1>Página não encontrada</h1>
+            <p>Volte para a <Link to='/'>Página inicial</Link> </p>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
+
+
 const route = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' >
       <Route index element={<Home />} />
       <Route path='/about' element={<About />}/>
       <Route path='/price' element={<Price />} />
+      <Route path='*' element={<NotFound />} />
     </Route>
   )
 );
