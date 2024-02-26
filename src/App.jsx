@@ -43,7 +43,7 @@ const Header = () => {
   return (
     <header>
     <nav className='nav'>
-        <Link to='/'><img className='logo' src={`./public/img/logo-viajou-anotou-${isHomepage ? 'dark' : 'light'}.png`} alt="" /></Link>
+        <Link to='/'><img className='logo' src={`https://raw.githubusercontent.com/Gui089/Viajou-Anotou/main/public/img/logo-viajou-anotou-${isHomepage ? 'dark' : 'light'}.png`} alt="" /></Link>
         <ul>
           {links.map(link => {
             const linkShouldBeGray = isHomepage && location.pathname !== link.path;
