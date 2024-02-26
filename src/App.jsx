@@ -3,8 +3,6 @@ import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
 
-
-
 const NotFound = () => {
   return (
     <>
@@ -20,7 +18,6 @@ const NotFound = () => {
     </>
   );
 }
-
 
 const route = createBrowserRouter(
   createRoutesFromElements(
