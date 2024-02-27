@@ -2,6 +2,7 @@ import { Route,NavLink, Link, createBrowserRouter, createRoutesFromElements, Rou
 import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
+import { Login } from './pages/Login.jsx';
 
 const NotFound = () => {
   return (
@@ -26,6 +27,7 @@ const route = createBrowserRouter(
       <Route path='/about' element={<About />}/>
       <Route path='/price' element={<Price />} />
       <Route path='*' element={<NotFound />} />
+      <Route path='/login' element={<Login />} />
     </Route>
   )
 );
@@ -55,6 +57,7 @@ const Header = () => {
               </li>
             )
           })}
+           <Link to='/login' className='cta'>Login</Link>
         </ul>
       </nav>
     </header>
