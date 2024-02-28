@@ -30,6 +30,10 @@ ul {
   list-style: none;
 }
 
+li {
+  margin-bottom: 10px;
+}
+
 main {
   border-radius: 20px;
 }
@@ -293,6 +297,19 @@ main {
   cursor: pointer;
   transition: all .4s;
   aspect-ratio: 1;
+}
+
+.btn {
+  height: 3rem;
+  width: 8rem;
+  border: none;
+  color: rgb(61, 61, 61);
+  font-size: 1.6rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all .4s;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
 .cities button:hover {

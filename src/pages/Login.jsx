@@ -7,10 +7,18 @@ const Login = () => {
       <main className='main-login'>
         <section>
           <form action='/' className='form-login'>
-            <label>Email</label>
-            <input type="text" />
-            <label>Senha</label>
-            <input type="password"/>
+            <div className='row'>
+              <label>
+                Email
+                <input type="email" defaultValue='gui@gmail.com'/>
+              </label>
+            </div>
+            <div className='row'>
+              <label>
+                Senha
+                <input type="password"  defaultValue='abc321'/>
+              </label>
+            </div>
             <button>Login</button>
           </form>
         </section>
