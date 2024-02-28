@@ -61,18 +61,18 @@ const Header = () => {
   )
 }
 
-const Cities = ({ city }) => {
-  
-  return (
-    <div className='cities'>    
-      <ul>
-        {city.map(city => 
-           <li key={city.id}><h3><Link to={`${city.id}`}>{city.name}</Link></h3></li>  
-        )}
-      </ul>
-     </div>
-  )
-}
+const Cities = ({ city }) => 
+   city.length === 0 ? <p>Adicione uma cidade</p> : (
+    <ul className='cities'>
+      {city.map(city => 
+        <li key={city.id}>
+          <Link to={`${city.id}`}>
+            <h3>{city.name}</h3>
+            <button>&times;</button>
+          </Link>
+        </li>)}
+    </ul>
+   )
 
 const CityDetails = ({ city }) => {
   const params = useParams();
@@ -80,10 +80,27 @@ const CityDetails = ({ city }) => {
 
   return (
     <div className='city-details'>
-      <h5>{cities.name}</h5>
-      <p>{cities.notes}</p>
+      <div className='row'>
+        <h5>Nome da Cidade</h5>
+        <h3>{cities.name}</h3>
+      </div>
+      <div className='row'>
+        <h5>Suas Anotações</h5>
+        <p>{cities.notes}</p>
+      </div>
     </div>
   )
+}
+
+const Countries = ({ city }) => {
+   const groupeByCountry = Object.groupBy(city, ({country}) => country)
+   const countries = Object.keys(groupeByCountry);
+
+   return (
+      <ul className='countries'>
+        {countries.map(country => <li key={country}>{country}</li>)}
+      </ul>
+   )
 }
 
 
@@ -111,8 +128,10 @@ const App = () => {
         <Route path='*' element={<NotFound />} />
         <Route path='/login' element={<Login />} />
         <Route path='/app' element={<Application />} >
+          <Route index element={<Cities city={city} />} />
           <Route path='cities' element={<Cities city={city} />} />
-          <Route path=':id' element={<CityDetails city={city} />} />
+          <Route path='cities/:id' element={<CityDetails city={city} />} />
+          <Route path='paises' element={<Countries city={city}/>} />
         </Route>
       </Route>
     )
