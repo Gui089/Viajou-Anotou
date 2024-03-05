@@ -67,7 +67,7 @@ const Cities = () => {
       <ul className='cities'>
         {city.map(city => 
           <li key={city.id}>
-            <Link to={`${city.id}`}>
+            <Link to={`${city.id}?latitude=${city.position.latitude}&longitude=${city.position.longitude}`}>
               <h3>{city.name}</h3>
               <button>&times;</button>
             </Link>
@@ -77,8 +77,6 @@ const Cities = () => {
   )
 }
   
-
-
 const CityDetails = () => {
   const city = useOutletContext();
   const params = useParams();
