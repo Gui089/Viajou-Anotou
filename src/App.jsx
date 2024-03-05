@@ -1,10 +1,9 @@
-import { Route,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, Outlet, useParams } from 'react-router-dom';
+import { Route,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
 import { Login } from './pages/Login.jsx';
 import { Application } from './pages/Application.jsx';
-import { useEffect, useState } from 'react';
 
 const NotFound = () => {
   return (
@@ -61,22 +60,31 @@ const Header = () => {
   )
 }
 
-const Cities = ({ city }) => 
-   city.length === 0 ? <p>Adicione uma cidade</p> : (
-    <ul className='cities'>
-      {city.map(city => 
-        <li key={city.id}>
-          <Link to={`${city.id}`}>
-            <h3>{city.name}</h3>
-            <button>&times;</button>
-          </Link>
-        </li>)}
-    </ul>
-   )
+const Cities = () => {
+  const city = useOutletContext();
+  return (
+    city.length === 0 ? <p>Adicione uma cidade</p> : (
+      <ul className='cities'>
+        {city.map(city => 
+          <li key={city.id}>
+            <Link to={`${city.id}`}>
+              <h3>{city.name}</h3>
+              <button>&times;</button>
+            </Link>
+          </li>)}
+      </ul>
+     )
+  )
+}
+  
 
-const CityDetails = ({ city }) => {
+
+const CityDetails = () => {
+  const city = useOutletContext();
   const params = useParams();
+  const navigate = useNavigate();
   const cities = city.find(city => city.id === Number(params.id));
+  const handleClickBack = () => navigate(-1);
 
   return (
     <div className='city-details'>
@@ -88,11 +96,13 @@ const CityDetails = ({ city }) => {
         <h5>Suas Anotações</h5>
         <p>{cities.notes}</p>
       </div>
+      <button onClick={handleClickBack} className='btn-back'>&larr; Voltar</button>
     </div>
   )
 }
 
-const Countries = ({ city }) => {
+const Countries = () => {
+   const city = useOutletContext();
    const groupeByCountry = Object.groupBy(city, ({country}) => country)
    const countries = Object.keys(groupeByCountry);
 
@@ -105,19 +115,6 @@ const Countries = ({ city }) => {
 
 
 const App = () => {
-  const [city, setCity] = useState([]);
-
-  useEffect(() => {
-    const fechCities = async () => {
-      const cities = await fetch('https://raw.githubusercontent.com/Gui089/fake-api-cities/main/fake-cities.json');
-      const resCities = await cities.json();
-      setCity(resCities);
-    }  
-    fechCities();
-
-    console.log(city)
-
-  }, []);
   
   const route = createBrowserRouter(
     createRoutesFromElements(
@@ -128,10 +125,9 @@ const App = () => {
         <Route path='*' element={<NotFound />} />
         <Route path='/login' element={<Login />} />
         <Route path='/app' element={<Application />} >
-          <Route index element={<Cities city={city} />} />
-          <Route path='cities' element={<Cities city={city} />} />
-          <Route path='cities/:id' element={<CityDetails city={city} />} />
-          <Route path='paises' element={<Countries city={city}/>} />
+          <Route path='/app/cities' element={<Cities />}/>
+          <Route path='cities/:id' element={<CityDetails />} />
+          <Route path='paises' element={<Countries />} />
         </Route>
       </Route>
     )
