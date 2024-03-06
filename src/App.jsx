@@ -1,4 +1,4 @@
-import { Route,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { Route,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, useParams, useNavigate, useOutletContext, Navigate } from 'react-router-dom';
 import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
@@ -20,7 +20,6 @@ const NotFound = () => {
     </>
   );
 }
-
 
 const links = [
   {path:'/', text:'Home'},
@@ -123,7 +122,8 @@ const App = () => {
         <Route path='*' element={<NotFound />} />
         <Route path='/login' element={<Login />} />
         <Route path='/app' element={<Application />} >
-          <Route path='/app/cities' element={<Cities />}/>
+          <Route index element={<Navigate to='cidades' replace/>} />
+          <Route path='cities' element={<Cities />}/>
           <Route path='cities/:id' element={<CityDetails />} />
           <Route path='paises' element={<Countries />} />
         </Route>

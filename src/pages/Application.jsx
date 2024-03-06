@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useSearchParams} from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 
+const buenosAiresPosition ={ latitude:'-34.60449337161966', longitude: '-58.38935696465469 '}
 
-const buenosAiresPosition ={latitude:'-34.60449337161966', longitude: '-58.38935696465469 '}
-
-  const ChangeCenter = ({position}) => {
+const ChangeCenter = ({position}) => {
   const map = useMap();
   map.setView(position);
   return null;
-  } 
+} 
 
 const Application = () => {
   const [city, setCity] = useState([]);
