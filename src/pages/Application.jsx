@@ -12,7 +12,7 @@ const ChangeCenter = ({position}) => {
 
 const Application = () => {
   const [city, setCity] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams(buenosAiresPosition);
+  const [searchParams, setSearchParams] = useSearchParams();
   const latitude = searchParams.get('latitude');
   const longitude = searchParams.get('longitude');
 
@@ -45,7 +45,7 @@ const Application = () => {
       </div>
 
      <div className='map-container'>
-     <MapContainer className='map-container' center={[latitude,longitude]} zoom={13} scrollWheelZoom={true}>
+     <MapContainer className='map-container' center={[buenosAiresPosition.latitude, buenosAiresPosition.longitude]} zoom={13} scrollWheelZoom={true}>
        <TileLayer
          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -56,7 +56,7 @@ const Application = () => {
            A pretty CSS3 popup. <br /> Easily customizable.
          </Popup>
        </Marker>)}
-       <ChangeCenter position={[latitude, longitude]} />
+       {latitude && longitude && <ChangeCenter position={[latitude, longitude]} />}
       </MapContainer>
      </div>
     </main>
