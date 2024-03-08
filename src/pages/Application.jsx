@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link, NavLink, Outlet, useSearchParams} from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+
+import { Link, NavLink, Outlet, useLoaderData, useNavigate, useSearchParams} from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet'
 
 const buenosAiresPosition ={ latitude:'-34.60449337161966', longitude: '-58.38935696465469 '}
 
@@ -10,24 +10,19 @@ const ChangeCenter = ({position}) => {
   return null;
 } 
 
+const ChangeToClickedCity = () => {
+  const navigate = useNavigate();
+  useMapEvents({
+    click: e => navigate(`form?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
+  });
+}
+
 const Application = () => {
-  const [city, setCity] = useState([]);
+  const city = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const latitude = searchParams.get('latitude');
   const longitude = searchParams.get('longitude');
 
-  useEffect(() => {
-    const fechCities = async () => {
-      const cities = await fetch('https://raw.githubusercontent.com/Gui089/fake-api-cities/main/fake-cities.json');
-      const resCities = await cities.json();
-      setCity(resCities);
-    }  
-    fechCities();
-
-    console.log(city);
-
-  }, []);
-  
   return (
     <main className='main-app-layout'>
       <div className='sidebar'>
@@ -44,7 +39,6 @@ const Application = () => {
       <Outlet context={city}/>
       </div>
 
-     <div className='map-container'>
      <MapContainer className='map-container' center={[buenosAiresPosition.latitude, buenosAiresPosition.longitude]} zoom={13} scrollWheelZoom={true}>
        <TileLayer
          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -57,8 +51,8 @@ const Application = () => {
          </Popup>
        </Marker>)}
        {latitude && longitude && <ChangeCenter position={[latitude, longitude]} />}
+       <ChangeToClickedCity />
       </MapContainer>
-     </div>
     </main>
   )
 }

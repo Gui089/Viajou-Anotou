@@ -6,7 +6,6 @@
   --color-light-1: #666;
   --color-light-2: #eaeaea;
   --color-light-3: #d8d8d8;
-  --color-light-4: #b7b7b7;
   --color-red: #fc4343;
 }
 
@@ -251,11 +250,8 @@ main {
 }
 
 .map-container {
-  background-color: lightskyblue;
-  width: 100%;
+  width: 60%;
   border-radius: 0 20px 20px 0;
-  flex: 1;
-  height: 100%;
 }
 
 .cities {
@@ -284,37 +280,6 @@ main {
   font-weight: 600;
   margin-right: auto;
 }
-
-.cities button {
-  height: 2rem;
-  border-radius: 50%;
-  border: none;
-  color: var(--color-light-4);
-  font-size: 1.6rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all .4s;
-  aspect-ratio: 1;
-}
-
-.btn {
-  height: 3rem;
-  width: 8rem;
-  border: none;
-  color: rgb(61, 61, 61);
-  font-size: 1.6rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all .4s;
-  margin-left: 10px;
-  margin-bottom: 10px;
-}
-
-.cities button:hover {
-  background-color: var(--color-red);
-  color: var(--color-light-2);
-}
-
 
 .countries {
   width: 100%;
@@ -370,14 +335,91 @@ main {
 .city-details p {
   font-size: 1.6rem;
 }
-.city-details .btn-back {
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.city-details .buttons {
+  justify-content: flex-end;
+}
+
+.form-edit-city .buttons {
+  justify-content: space-between;
+}
+
+.city-details button,
+.form-edit-city button {
   font-weight: 600;
   font-size: 1.6rem;
   background: none;
   border-radius: 5px;
-  padding: 1rem 3rem;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  width: 10rem;
+}
+
+.btn-back {
   color: var(--color-light-1);
   border: 1px solid var(--color-light-1);
-  cursor: pointer;
-  width: 14rem;
+}
+
+.city-details .btn-delete {
+  color: var(--color-red);
+  border: 1px solid var(--color-red);
+}
+
+.city-details .btn-edit {
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-save {
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.map-container {
+  height: 100%;
+  border-radius: 0 20px 20px 0;
+}
+
+.leaflet-control-attribution {
+  font-size: 1.3rem;
+}
+
+.initial-message {
+  text-align: center;
+  font-size: 2rem;
+  margin: 2rem auto;
+  font-weight: 600;
+}
+
+.form-edit-city {
+  background-color: var(--color-light-2);
+  border-radius: 5px;
+  padding: 2rem 3rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-edit-city label {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.form-edit-city input,
+.form-edit-city textarea {
+  width: 100%;
+  padding: .8rem 1.2rem;
+  font-size: 1.6rem;
+  border: none;
+  border-radius: 5px;
+  transition: all .2s;
 }
