@@ -12,8 +12,10 @@ const ChangeCenter = ({position}) => {
 
 const ChangeToClickedCity = () => {
   const navigate = useNavigate();
+  const id = crypto.randomUUID();
+
   useMapEvents({
-    click: e => navigate(`form?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
+    click: e => navigate(`cidades/${id}/edit?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
   });
 }
 

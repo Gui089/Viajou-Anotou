@@ -70,21 +70,26 @@ const Cities = () => {
           <li key={city.id}>
             <Link to={`${city.id}?latitude=${city.position.latitude}&longitude=${city.position.longitude}`}>
               <h3>{city.Name}</h3>
-              <button>&times;</button>
             </Link>
           </li>)}
       </ul>
      )
   )
 }
-  
+
 const CityDetails = () => {
   const city = useLoaderData();
   const params = useParams();
   const navigate = useNavigate();
   const cities = city.find(city => city.id === params.id);
-  console.log('citieDetails: ', cities);
   const handleClickBack = () => navigate(-1);
+
+  const deleteContact = (e) => {
+    const wantToDelete = confirm("Por favor, confirme que quer deletar essa viagem.");
+    if(!wantToDelete) {
+      e.preventDefault();
+    }
+  }
 
   return (
     <div className='city-details'>
@@ -96,7 +101,13 @@ const CityDetails = () => {
         <h5>Suas Anotações</h5>
         <p>{cities.notes}</p>
       </div>
+      <div className='buttons'>
       <button onClick={handleClickBack} className='btn-back'>&larr; Voltar</button>
+      <button className='btn-edit'>&there4;Editar</button>
+      <Form method='post' action='delete' onSubmit={deleteContact}>
+        <button className='btn-delete' type='submit'>&times; Deletar</button>
+      </Form>
+      </div>
     </div>
   )
 }
@@ -118,23 +129,24 @@ const handleAddCities = async ({ request }) => {
   const latitude = url.searchParams.get('latitude');
   const longitude = url.searchParams.get('longitude');
   const formData = await request.formData();
+
   const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localitylanguage=pt-BR`)
   const country = await response.json();
   const city = {...Object.fromEntries(formData), position: {latitude, longitude}, id: crypto.randomUUID(), country: country.countryName};
   const cities = await localforage.getItem('cities');
   await localforage.setItem('cities', cities ? [...cities, city]:[city])
   console.log('city: ', city);
-  return redirect('/app/cities');
+  return redirect(`/app/cities`);
 }
 
-const handleGetCities = async ({ request }) => {
+const handleGetCities = async ({ request, params }) => {
   const url = new URL(request.url);
   const latitude = url.searchParams.get('latitude');
   const longitude = url.searchParams.get('longitude');
   const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localitylanguage=pt-BR`)
   const info = await response.json();
 
-  return {name: info.city, country: info.countryName};
+  return {name: info.city, id: params.id};
 }
 
 const citiesLoader = async () => {
@@ -142,28 +154,34 @@ const citiesLoader = async () => {
   return cities ?? [];
 }
 
-const FormAddCity = () => {
+const EditCity = () => {
   const navigate = useNavigate();
   const city = useLoaderData();
   
-  const handleClickBack = (e) => {
-    e.preventDefault();
+  const handleClickBack = () => {
     navigate('/app/cities');
   } 
 
   return (
     <Form method='post' className='form-edit-city'>
       <label>Nome da cidade</label>
-      <input type="text" name='Name' key={city.name} defaultValue={city.name}/>
+      <input required type="text" name='Name' key={city.name} defaultValue={city.name}/>
       <label>Quando vc para {city.name}</label>
-      <input type="date" />
+      <input required type="date" defaultValue={city.date || ''}/>
       <label>Suas anotações</label>  
-      <textarea name="notes"></textarea> 
+      <textarea required name="notes" defaultValue={city.notes || ''}></textarea> 
       <div className='buttons'>
-      <button type='button' onClick={handleClickBack} className='btn-back'>&larr;Voltar</button>
-      <button type='submit'onClick={handleAddCities} className='btn-save'>Salvar</button> </div>  
+        <button type='button' onClick={handleClickBack} className='btn-back'>&larr;Voltar</button>
+        <button type='submit' className='btn-save'>Salvar</button>
+      </div>  
     </Form>
   )
+}
+
+const deleteAction =  async ({ params }) => {
+  const cities = await localforage.getItem('cities');
+  await localforage.setItem('cities', cities ? cities.filter(city => city.id !== params.id) : []);
+  return redirect ('/app/cities');
 }
 
 const App = () => {
@@ -180,8 +198,9 @@ const App = () => {
           <Route index element={<Navigate to='cidades' replace/>} />
           <Route path='cities' element={<Cities />}/>
           <Route path='cities/:id' element={<CityDetails />} loader={citiesLoader}/>
+          <Route path='cidades/:id/edit' element={<EditCity />} loader={handleGetCities} action={handleAddCities}/>
+          <Route path='cities/:id/delete' action={deleteAction}/>
           <Route path='paises' element={<Countries />} />
-          <Route path='form' element={<FormAddCity />} loader={handleGetCities} action={handleAddCities}/>
         </Route>
       </Route>
     )
