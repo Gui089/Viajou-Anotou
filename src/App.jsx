@@ -1,26 +1,10 @@
-import { Route,Form,redirect ,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, useParams, useNavigate, useOutletContext, Navigate, useLoaderData } from 'react-router-dom';
+import { Route,Form,redirect ,NavLink, Link, createBrowserRouter, createRoutesFromElements, RouterProvider, useLocation, useParams, useNavigate, useOutletContext, Navigate, useLoaderData, useRouteError } from 'react-router-dom';
 import { Home } from './pages/Home.jsx';
 import { Price } from './pages/Price.jsx';
 import { About } from './pages/About.jsx';
 import { Login } from './pages/Login.jsx';
 import { Application } from './pages/Application.jsx';
 import localforage from 'localforage';
-
-const NotFound = () => {
-  return (
-    <>
-      <Header />
-      <main className='main-not-found'>
-        <section>
-          <div>
-            <h1>Página não encontrada</h1>
-            <p>Volte para a <Link to='/'>Página inicial</Link> </p>
-          </div>
-        </section>
-      </main>
-    </>
-  );
-}
 
 const links = [
   {path:'/', text:'Home'},
@@ -184,24 +168,43 @@ const deleteAction =  async ({ params }) => {
   return redirect ('/app/cities');
 }
 
+const ErrorElement = () => {
+  const error = useRouteError();
+  console.log('Error:', error.message);
+
+  return (
+    <>
+      <Header />
+      <main className='main-not-found'>
+        <section>
+        <h1>Opa!</h1>
+        <p>Ocorreu um erro inesperado</p>
+        <p>{error.message}</p>
+        </section>
+      </main>
+    </>
+  )
+}
+
 const App = () => {
   
   const route = createBrowserRouter(
     createRoutesFromElements(
-      <Route path='/' >
+      <Route errorElement={<ErrorElement />}>
+        <Route path='/' >
         <Route index element={<Home />} />
         <Route path='/about' element={<About />}/>
         <Route path='/price' element={<Price />} />
-        <Route path='*' element={<NotFound />} />
         <Route path='/login' element={<Login />} />
         <Route path='/app' element={<Application />} loader={citiesLoader}>
           <Route index element={<Navigate to='cidades' replace/>} />
           <Route path='cities' element={<Cities />}/>
           <Route path='cities/:id' element={<CityDetails />} loader={citiesLoader}/>
-          <Route path='cidades/:id/edit' element={<EditCity />} loader={handleGetCities} action={handleAddCities}/>
+          <Route path='cities/:id/edit' element={<EditCity />} loader={handleGetCities} action={handleAddCities}/>
           <Route path='cities/:id/delete' action={deleteAction}/>
           <Route path='paises' element={<Countries />} />
         </Route>
+      </Route>
       </Route>
     )
   );
