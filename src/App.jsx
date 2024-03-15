@@ -46,7 +46,10 @@ const Header = () => {
 
 const Cities = () => {
   const city = useOutletContext();
-  
+  const groupeByCountry = Object.groupBy(city, ({country}) => country)
+  const countries = Object.keys(groupeByCountry);
+  console.log(city);
+
   return (
     city.length === 0 ? <h2>Clique no mapa para adicionar uma cidade </h2> : (
       <ul className='cities'>
@@ -98,8 +101,10 @@ const CityDetails = () => {
 
 const Countries = () => {
    const city = useOutletContext();
-   const groupeByCountry = Object.groupBy(city, ({country}) => country)
-   const countries = Object.keys(groupeByCountry);
+   const countries = city.reduce((acc, city) => {
+    const duplicateCountry = acc.some(accItem => accItem === city.country);
+    return duplicateCountry ? acc : [...acc, city.country];
+   }, []);
 
    return (
       <ul className='countries'>
@@ -146,6 +151,8 @@ const EditCity = () => {
     navigate('/app/cities');
   } 
 
+  console.log('Form city:', city);
+
   return (
     <Form method='post' className='form-edit-city'>
       <label>Nome da cidade</label>
@@ -190,7 +197,7 @@ const App = () => {
   
   const route = createBrowserRouter(
     createRoutesFromElements(
-      <Route errorElement={<ErrorElement />}>
+        <Route errorElement={<ErrorElement />}>
         <Route path='/' >
         <Route index element={<Home />} />
         <Route path='/about' element={<About />}/>
@@ -204,8 +211,8 @@ const App = () => {
           <Route path='cities/:id/delete' action={deleteAction}/>
           <Route path='paises' element={<Countries />} />
         </Route>
-      </Route>
-      </Route>
+        </Route>
+        </Route>
     )
   );
 

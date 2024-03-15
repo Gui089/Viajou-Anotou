@@ -15,7 +15,7 @@ const ChangeToClickedCity = () => {
   const id = crypto.randomUUID();
 
   useMapEvents({
-    click: e => navigate(`cidades/${id}/edit?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
+    click: e => navigate(`cities/${id}/edit?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
   });
 }
 
