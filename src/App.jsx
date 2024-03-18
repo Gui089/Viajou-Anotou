@@ -44,18 +44,21 @@ const Header = () => {
   )
 }
 
+const CountryFlag = ({country, className, width = 20, height = 15 }) => {
+  const src = `https://flagcdn.com/${width}x${height}/${country.code}.png`;
+  return <img className={className} alt={country.name} src={src}></img>
+}
+
 const Cities = () => {
   const city = useOutletContext();
-  const groupeByCountry = Object.groupBy(city, ({country}) => country)
-  const countries = Object.keys(groupeByCountry);
-  console.log(city);
 
   return (
     city.length === 0 ? <h2>Clique no mapa para adicionar uma cidade </h2> : (
       <ul className='cities'>
-        {city.map(city => 
+        {city.map((city) => 
           <li key={city.id}>
             <Link to={`${city.id}?latitude=${city.position.latitude}&longitude=${city.position.longitude}`}>
+              <CountryFlag  country={city.country}/>
               <h3>{city.Name}</h3>
             </Link>
           </li>)}
@@ -78,11 +81,16 @@ const CityDetails = () => {
     }
   }
 
+  console.log('detalhes: ', cities.Name);
+
   return (
     <div className='city-details'>
       <div className='row'>
         <h5>Nome da Cidade</h5>
-        <h3>{cities.Name}</h3>
+        <h3>
+          <CountryFlag country={cities.country} className='pa'/>
+          {cities.Name}
+        </h3>
       </div>
       <div className='row'>
         <h5>Suas Anotações</h5>
@@ -102,13 +110,20 @@ const CityDetails = () => {
 const Countries = () => {
    const city = useOutletContext();
    const countries = city.reduce((acc, city) => {
-    const duplicateCountry = acc.some(accItem => accItem === city.country);
+    const duplicateCountry = acc.some(accItem => accItem.name === city.country.name);
     return duplicateCountry ? acc : [...acc, city.country];
    }, []);
 
+   console.log('paises: ', countries);
+
    return (
       <ul className='countries'>
-        {countries.map(country => <li key={country}>{country}</li>)}
+        {countries.map(country => (
+          <li key={country.name}>
+            <CountryFlag country={country} className=' mr-05 mb--3px '/>
+            {country.name}
+          </li>
+        ))}
       </ul>
    )
 }
@@ -121,7 +136,7 @@ const handleAddCities = async ({ request }) => {
 
   const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localitylanguage=pt-BR`)
   const country = await response.json();
-  const city = {...Object.fromEntries(formData), position: {latitude, longitude}, id: crypto.randomUUID(), country: country.countryName};
+  const city = {...Object.fromEntries(formData), position: {latitude, longitude}, id: crypto.randomUUID(),country: {name: country.countryName, code: country.countryCode.toLowerCase()}};
   const cities = await localforage.getItem('cities');
   await localforage.setItem('cities', cities ? [...cities, city]:[city])
   console.log('city: ', city);
