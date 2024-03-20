@@ -5,6 +5,7 @@ import { About } from './pages/About.jsx';
 import { Login } from './pages/Login.jsx';
 import { Application } from './pages/Application.jsx';
 import localforage from 'localforage';
+import { logoutAction } from './pages/Application.jsx';
 
 const links = [
   {path:'/', text:'Home'},
@@ -81,8 +82,6 @@ const CityDetails = () => {
     }
   }
 
-  console.log('detalhes: ', cities.Name);
-
   return (
     <div className='city-details'>
       <div className='row'>
@@ -114,13 +113,11 @@ const Countries = () => {
     return duplicateCountry ? acc : [...acc, city.country];
    }, []);
 
-   console.log('paises: ', countries);
-
    return (
       <ul className='countries'>
         {countries.map(country => (
           <li key={country.name}>
-            <CountryFlag country={country} className=' mr-05 mb--3px '/>
+            <CountryFlag country={country} className="mr-05 mb--3px"/>
             {country.name}
           </li>
         ))}
@@ -153,7 +150,11 @@ const handleGetCities = async ({ request, params }) => {
   return {name: info.city, id: params.id};
 }
 
-const citiesLoader = async () => {
+const appLoader = async () => {
+  if(!fakeAuthProvider.isAuthenticated) {
+    return redirect('/login');
+  }
+
   const cities = await localforage.getItem('cities');
   return cities ?? [];
 }
@@ -165,8 +166,6 @@ const EditCity = () => {
   const handleClickBack = () => {
     navigate('/app/cities');
   } 
-
-  console.log('Form city:', city);
 
   return (
     <Form method='post' className='form-edit-city'>
@@ -192,7 +191,7 @@ const deleteAction =  async ({ params }) => {
 
 const ErrorElement = () => {
   const error = useRouteError();
-  console.log('Error:', error.message);
+  console.log('erro: ', error);
 
   return (
     <>
@@ -208,6 +207,41 @@ const ErrorElement = () => {
   )
 }
 
+const fakeAuthProvider = {
+  isAuthenticated: false,
+  email: null,
+  signIn: async function (email) {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    this.isAuthenticated = true
+    this.email = email
+  },
+  signOut: async function () {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    this.isAuthenticated = false
+    this.email = null
+  }
+}
+
+const loginAction = async ({ request }) => {
+  const { email, password } = Object.fromEntries(await request.formData());
+  
+  try {
+    await fakeAuthProvider.signIn(email);
+  } catch(error) {
+    return { error: 'Nao foi possivel fazer login, por favor tente novamente'}
+  }
+
+  return redirect('/app');
+}
+
+const loginLoader = async () => {
+  if (!fakeAuthProvider.isAuthenticated) {
+    return null;
+  }
+
+  return redirect('/app');
+}
+
 const App = () => {
   
   const route = createBrowserRouter(
@@ -217,11 +251,12 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path='/about' element={<About />}/>
         <Route path='/price' element={<Price />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/app' element={<Application />} loader={citiesLoader}>
-          <Route index element={<Navigate to='cidades' replace/>} />
+        <Route path='/login' element={<Login />} loader={loginLoader} action={loginAction}/>
+        <Route path='/logout' action={logoutAction} />
+        <Route path='/app' element={<Application />} loader={appLoader} >
+          <Route index element={<Navigate to='cities' replace/>} />
           <Route path='cities' element={<Cities />}/>
-          <Route path='cities/:id' element={<CityDetails />} loader={citiesLoader}/>
+          <Route path='cities/:id' element={<CityDetails />} loader={appLoader}/>
           <Route path='cities/:id/edit' element={<EditCity />} loader={handleGetCities} action={handleAddCities}/>
           <Route path='cities/:id/delete' action={deleteAction}/>
           <Route path='paises' element={<Countries />} />
@@ -239,4 +274,4 @@ const App = () => {
 }
 
 
-export {App, Header}
+export {App, Header, fakeAuthProvider}

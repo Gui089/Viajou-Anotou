@@ -1,4 +1,5 @@
 import { Header } from '../App';
+import { Form } from 'react-router-dom';
 
 const Login = () => {
   return (
@@ -6,21 +7,21 @@ const Login = () => {
       <Header />
       <main className='main-login'>
         <section>
-          <form action='/' className='form-login'>
+          <Form method='post' className='form-login'>
             <div className='row'>
               <label>
                 Email
-                <input type="email" defaultValue='gui@gmail.com'/>
+                <input required name='email' type="email" defaultValue='gui@gmail.com'/>
               </label>
             </div>
             <div className='row'>
               <label>
                 Senha
-                <input type="password"  defaultValue='abc321'/>
+                <input required name='password' type="password"  defaultValue='abc321'/>
               </label>
             </div>
             <button>Login</button>
-          </form>
+          </Form>
         </section>
       </main>
     </>

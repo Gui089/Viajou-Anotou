@@ -1,6 +1,7 @@
 
-import { Link, NavLink, Outlet, useLoaderData, useNavigate, useSearchParams} from 'react-router-dom';
+import { Link,Form, NavLink, Outlet, redirect, useLoaderData, useNavigate, useSearchParams} from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet'
+import { fakeAuthProvider } from '../App';
 
 const buenosAiresPosition ={ latitude:'-34.60449337161966', longitude: '-58.38935696465469 '}
 
@@ -17,6 +18,13 @@ const ChangeToClickedCity = () => {
   useMapEvents({
     click: e => navigate(`cities/${id}/edit?latitude=${e.latlng.lat}&longitude=${e.latlng.lng}`)
   });
+}
+
+export const logoutAction = async () => {
+  await fakeAuthProvider.signOut();
+  console.log('executou logout')
+  console.log(fakeAuthProvider);
+  return redirect('/');
 }
 
 const Application = () => {
@@ -40,6 +48,10 @@ const Application = () => {
       </nav>
       <Outlet context={city}/>
       </div>
+       
+      <Form method='post' action='/logout'>
+         <button className='btn-logout cta'>Logout</button>
+      </Form>
 
      <MapContainer className='map-container' center={[buenosAiresPosition.latitude, buenosAiresPosition.longitude]} zoom={13} scrollWheelZoom={true}>
        <TileLayer
