@@ -225,6 +225,10 @@ const fakeAuthProvider = {
 const loginAction = async ({ request }) => {
   const { email, password } = Object.fromEntries(await request.formData());
   
+  if(email.length <= 3) {
+    return{error: 'O email nao pode ter menos de 4 caracteres'};
+  }
+
   try {
     await fakeAuthProvider.signIn(email);
   } catch(error) {

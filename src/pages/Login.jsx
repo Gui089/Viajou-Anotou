@@ -1,7 +1,9 @@
 import { Header } from '../App';
-import { Form } from 'react-router-dom';
+import { Form, useActionData } from 'react-router-dom';
 
 const Login = () => {
+  const actionData = useActionData();
+
   return (
     <>  
       <Header />
@@ -21,6 +23,7 @@ const Login = () => {
               </label>
             </div>
             <button>Login</button>
+            {actionData && actionData.error ? <p style={{color:'red'}}>{actionData.error}</p> : null}
           </Form>
         </section>
       </main>
